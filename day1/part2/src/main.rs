@@ -1,4 +1,4 @@
-fn get_caliberation(iterator: impl Iterator<Item = char> + DoubleEndedIterator, last: bool) -> i32 {
+fn get_caliberation(iterator: impl Iterator<Item = char>, last: bool) -> i32 {
     let translations = [
         "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
     ];
