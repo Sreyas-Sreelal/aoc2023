@@ -1,4 +1,4 @@
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Copy, Clone)]
 enum Color {
     Red,
     Green,
@@ -18,21 +18,15 @@ struct Game {
 
 impl Game {
     fn get_max_power(&self) -> i32 {
-        let mut max_red = 0;
-        let mut max_green = 0;
-        let mut max_blue = 0;
+        let mut max_values = [0, 0, 0];
         for set in &self.sets {
             for cube in set {
-                if cube.color == Color::Red && cube.count > max_red {
-                    max_red = cube.count;
-                } else if cube.color == Color::Green && cube.count > max_green {
-                    max_green = cube.count;
-                } else if cube.color == Color::Blue && cube.count > max_blue {
-                    max_blue = cube.count;
+                if cube.count > max_values[cube.color as usize] {
+                    max_values[cube.color as usize] = cube.count;
                 }
             }
         }
-        max_red * max_green * max_blue
+        max_values[0] * max_values[1] * max_values[2]
     }
 }
 
@@ -53,7 +47,7 @@ fn parse_game(input: &str) -> Vec<Game> {
             sets.push(Vec::new());
             let set = sets.iter_mut().last().unwrap();
             for x in token.split(", ") {
-                let p: Vec<&str> = x.split(" ").collect();
+                let p: Vec<&str> = x.split(' ').collect();
                 set.push(Cube {
                     count: p[0].parse().unwrap(),
                     color: get_color_from_string(p[1]),
