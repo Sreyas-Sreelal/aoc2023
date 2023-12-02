@@ -1,43 +1,38 @@
-use std::collections::HashMap;
+fn get_caliberation(iterator: impl Iterator<Item = char> + DoubleEndedIterator, last: bool) -> i32 {
+    let translations = [
+        "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
+    ];
+    let mut val = 0;
+    let mut temp = String::new();
+    'outer: for y in iterator {
+        if last {
+            temp.insert(0, y);
+        } else {
+            temp.insert(temp.len(), y);
+        }
 
-fn main() {
-    let translations = HashMap::from([
-        ("zero", 0),
-        ("one", 1),
-        ("two", 2),
-        ("three", 3),
-        ("four", 4),
-        ("five", 5),
-        ("six", 6),
-        ("seven", 7),
-        ("eight", 8),
-        ("nine", 9),
-    ]);
-    let mut output = 0;
-    let mut checker: Vec<Vec<i32>> = Vec::new();
-    for x in include_str!("../input").lines() {
-        checker.push(Vec::new());
-        let mut temp = String::new();
-        for y in x.chars() {
-            temp.push(y);
-            let data = checker.iter_mut().last().unwrap();
-            if y.is_ascii_digit() {
-                data.push(y as i32 - '0' as i32);
-                continue;
-            }
-            for key in translations.keys() {
-                if temp.contains(key) {
-                    data.push(translations[key]);
-                    let last = temp.chars().last().unwrap();
-                    temp = String::new();
-                    temp.push(last);
-                }
+        if y.is_ascii_digit() {
+            val = y as i32 - '0' as i32;
+            break;
+        }
+        for (idx, key) in translations.iter().enumerate() {
+            if temp.contains(key) {
+                val = idx as i32;
+                break 'outer;
             }
         }
     }
-    let checker = checker.iter().filter(|x| !x.is_empty());
-    for number in checker {
-        output = *number.iter().next().unwrap() * 10 + *number.iter().last().unwrap();
+    if last {
+        val
+    } else {
+        val * 10
+    }
+}
+fn main() {
+    let mut output = 0;
+    for x in include_str!("../input").lines() {
+        output += get_caliberation(x.chars(), false);
+        output += get_caliberation(x.chars().rev(), true);
     }
     println!("{:?}", output);
 }
